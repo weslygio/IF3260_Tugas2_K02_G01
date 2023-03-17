@@ -1,0 +1,43 @@
+h1 {
+    text-align: center;
+    padding: 10px;
+}
+
+.tool {
+    display: flex;
+    padding: 0px 20px;
+}
+
+canvas {
+    float: left;
+    width: 60vw;
+    height: 45vw;
+}
+
+.settings {
+    margin-left: 20px;
+    width: auto;
+}
+
+.position {
+    display: flex;
+}
+
+.translate {
+    margin-left: 20px;
+}
+
+.color {
+    display: flex;
+}
+
+.slider {
+    width: 180px;
+}
+
+#glcanvas {
+    border: 2px black solid;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
