@@ -17,9 +17,9 @@ var rx = 0.83;
 var ry = 0.3;
 var rz = 0.0;
 var sc = 1.0;
-var tx = 1.0;
-var ty = 1.0;
-var tz = 2.5;
+var tx = 0.0;
+var ty = 0.0;
+var tz = 0.0;
 var cr = 0.5;
 var cg = 0.5;
 var cb = 0.5;
@@ -73,7 +73,7 @@ function updateProjection() {
     var selectedValue = dropdown.value;
     console.log(selectedValue);
     if (selectedValue == 'Perspective') {
-        z = -3.0;
+        z = -4.0;
         fudgeFactor = 1;
     } else if (selectedValue == 'Orthographic') {
         z = -5.0;
@@ -123,6 +123,7 @@ window.onload = async () => {
     const objectInfo = await initObject(gl);
     var fudgeLocation = gl.getUniformLocation(shaderProgram, "u_fudgeFactor");
 
+
     function render() {
         // Set the fudgeFactor
         gl.uniform1f(fudgeLocation, fudgeFactor);
@@ -140,9 +141,16 @@ window.onload = async () => {
         const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
         const zNear = 0.1;
         const zFar = 100.0;
-        const projectionMatrix = mat4.create();
-        mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-        mat4.translate(projectionMatrix, projectionMatrix, [0, 0, z]);
+        // const projectionMatrix2 = mat4.create();
+        // mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
+        // mat4.translate(projectionMatrix, projectionMatrix, [0, 0, z]);
+
+        var projectionMatrix = new Matrix();
+
+        projectionMatrix.fill(projectionMatrix.perspective(fieldOfView, aspect, zNear, zFar));
+        projectionMatrix.translate(0, 0, z);
+
+        // console.log(projectionMatrix);
 
         // Draw the object
         drawObject(gl, programInfo, objectInfo, projectionMatrix);
@@ -186,18 +194,35 @@ async function initObject(gl) {
 function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, buffers, projectionMatrix) {
     gl.useProgram(programInfo.program);
     
-    const worldMatrix = mat4.create();
+    // const worldMatrix = mat4.create();
     //mat4.translate(worldMatrix, worldMatrix, [tx, ty, tz]);
-    mat4.rotateX(worldMatrix, worldMatrix, rx);
-    mat4.rotateY(worldMatrix, worldMatrix, ry);
-    mat4.rotateZ(worldMatrix, worldMatrix, rz);
+    // mat4.rotateX(worldMatrix, worldMatrix, rx);
+    // mat4.rotateY(worldMatrix, worldMatrix, ry);
+    // mat4.rotateZ(worldMatrix, worldMatrix, rz);
 
-    const worldProjectionMatrix = mat4.create();
-    mat4.multiply(worldProjectionMatrix, projectionMatrix, worldMatrix);
+    var worldMatrix = new Matrix();
+    var worldProjectionMatrix = new Matrix();
 
-    const worldInverseTransposeMatrix = mat4.create();
-    mat4.invert(worldInverseTransposeMatrix, worldMatrix);
-    mat4.transpose(worldInverseTransposeMatrix, worldInverseTransposeMatrix);
+    // const worldProjectionMatrix = mat4.create();
+    // mat4.multiply(worldProjectionMatrix, projectionMatrix, worldMatrix);
+
+    worldMatrix.translate(tx, ty, tz);
+    worldMatrix.xRotate(rx);
+    worldMatrix.yRotate(ry);
+    worldMatrix.zRotate(rz);
+
+    // console.log(worldMatrix.elements)
+
+    worldProjectionMatrix.elements = projectionMatrix.multiply(worldMatrix.elements);
+
+    // console.log(worldProjectionMatrix.elements);
+
+    // const worldInverseTransposeMatrix = mat4.create();
+    // mat4.invert(worldInverseTransposeMatrix, worldMatrix);
+    // mat4.transpose(worldInverseTransposeMatrix, worldInverseTransposeMatrix);
+
+    var worldInverseTransposeMatrix = new Matrix();
+    worldInverseTransposeMatrix.elements = worldMatrix.invert().transpose().elements;
     
     // Position attribute
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positions);
@@ -215,9 +240,9 @@ function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, buffer
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 
     // Uniforms
-    gl.uniformMatrix4fv(programInfo.uniformLocations.worldMatrix, false, worldMatrix);
-    gl.uniformMatrix4fv(programInfo.uniformLocations.worldProjectionMatrix, false, worldProjectionMatrix);
-    gl.uniformMatrix4fv(programInfo.uniformLocations.worldInverseTransposeMatrix, false, worldInverseTransposeMatrix);
+    gl.uniformMatrix4fv(programInfo.uniformLocations.worldMatrix, false, worldMatrix.elements);
+    gl.uniformMatrix4fv(programInfo.uniformLocations.worldProjectionMatrix, false, worldProjectionMatrix.elements);
+    gl.uniformMatrix4fv(programInfo.uniformLocations.worldInverseTransposeMatrix, false, worldInverseTransposeMatrix.elements);
     gl.uniform4fv(programInfo.uniformLocations.lightWorldPosition, [tx,ty,tz,1]);
     gl.uniform4fv(programInfo.uniformLocations.ambientProduct, [0.2, 0.2, 0.2, 1.0]);
     gl.uniform4fv(programInfo.uniformLocations.diffuseProduct, [cr, cg, cb, 1.0]);
@@ -273,3 +298,4 @@ function getColor(model) {
     model.geometry.indices.forEach(_ => colors.push(0.8, 0.5, 0.5, 1.0));    // Hardcode color
     return colors;
 }
+
