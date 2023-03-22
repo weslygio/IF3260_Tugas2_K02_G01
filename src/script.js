@@ -24,6 +24,9 @@ var cr = 0.5;
 var cg = 0.5;
 var cb = 0.5;
 
+var fudgeFactor = 1;
+var z = -3.0;
+
 slider_rx.oninput = function() {
     rx = this.value * Math.PI;
 }
@@ -64,6 +67,20 @@ slider_cb.oninput = function() {
     cb = this.value;
 }
 
+document.getElementById("dropdown").addEventListener("change", updateProjection);
+function updateProjection() {
+    var dropdown = document.getElementById("dropdown");
+    var selectedValue = dropdown.value;
+    console.log(selectedValue);
+    if (selectedValue == 'Perspective') {
+        z = -3.0;
+        fudgeFactor = 1;
+    } else if (selectedValue == 'Orthographic') {
+        z = -5.0;
+        fudgeFactor = 0;
+    }
+    // Do something with the selected value here
+  }
 
 window.onload = async () => {
     /** @type {HTMLCanvasElement} */
@@ -104,8 +121,12 @@ window.onload = async () => {
 
     // Get object information
     const objectInfo = await initObject(gl);
+    var fudgeLocation = gl.getUniformLocation(shaderProgram, "u_fudgeFactor");
 
     function render() {
+        // Set the fudgeFactor
+        gl.uniform1f(fudgeLocation, fudgeFactor);
+        
         // Reset canvas
         gl.viewport(0, 0, canvas.width, canvas.height);
         gl.clearColor(0.5, 1.0, 1.0, 1.0);
@@ -121,7 +142,7 @@ window.onload = async () => {
         const zFar = 100.0;
         const projectionMatrix = mat4.create();
         mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-        mat4.translate(projectionMatrix, projectionMatrix, [0, 0, -10.0]);
+        mat4.translate(projectionMatrix, projectionMatrix, [0, 0, z]);
 
         // Draw the object
         drawObject(gl, programInfo, objectInfo, projectionMatrix);
