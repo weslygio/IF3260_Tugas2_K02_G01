@@ -13,13 +13,13 @@ const slider_cr = document.getElementById("cr");
 const slider_cg = document.getElementById("cg");
 const slider_cb = document.getElementById("cb");
 
-var rx = 0.28;
-var ry = -0.33;
+var rx = 0.83;
+var ry = 0.3;
 var rz = 0.0;
 var sc = 1.0;
-var tx = 0.0;
-var ty = 0.0;
-var tz = 0.0;
+var tx = 1.0;
+var ty = 1.0;
+var tz = 2.5;
 var cr = 0.5;
 var cg = 0.5;
 var cb = 0.5;
@@ -133,7 +133,7 @@ window.onload = async () => {
 
 // Initialize object
 async function initObject(gl) {
-    const model = JSON.parse(await (await fetch("../test/pyramid.json", {cache: "no-cache"})).text());
+    const model = JSON.parse(await (await fetch("../test/cube.json", {cache: "no-cache"})).text());
     const object = modelToObject(model);
 
     // Positions
