@@ -159,6 +159,60 @@ class Matrix {
         this.elements = this.multiply(scale_matrix.elements);
     }
 
+    // projection matrix
+    projection(projection, fov, aspect, near, far, angle) {
+        if (projection == "Perspective") {
+            return this.perspective(fov, aspect, near, far);
+        } else if (projection == "Orthographic") {
+            return this.orthographic(fov, aspect, near, far);
+        } else if (projection == "Oblique") {
+            this.elements = this.orthographic(fov, aspect, near, far);
+            return this.oblique(angle);
+        }
+    }
+
+    //oblique matrix
+    oblique(angle) {
+        var ortho_matrix = new Matrix();
+        var theta = Math.PI / 4; // angle of obliqueness in radians
+        var d = 1; // distance of projection plane from viewer
+
+        ortho_matrix.elements = [
+            1/Math.cos(theta), 0, -1/d, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        ]
+
+        console.log(ortho_matrix.elements);
+
+        return this.multiply(ortho_matrix.elements);
+        
+    }
+
+    // orthographic matrix
+    orthographic(fov, aspect, near, far) {
+        var ortho_matrix = new Matrix();
+        var left = -6 * Math.tan(fov / 2);
+        var right = 6 * Math.tan(fov / 2);
+        var top = left / aspect;
+        var bottom = right / aspect;
+
+        var lr = 1 / (left - right);
+        var bt = 1 / (bottom - top);
+        var nf = 1 / (near - far);
+
+        ortho_matrix.elements = [
+            -2 * lr, 0, 0, 0,
+            0, -2 * bt, 0, 0,
+            0, 0, 2 * nf, 0,
+            (left + right) * lr, (top + bottom) * bt, (far + near) * nf, 1,
+        ]
+
+        return this.multiply(ortho_matrix.elements);
+    }
+
+
     // perspective matrix
     perspective(fov, aspect, near, far) {
         var persp_matrix = new Matrix();
@@ -170,7 +224,6 @@ class Matrix {
             0, 0, (far + near) * nf, -1,
             0, 0, 2 * far * near * nf, 0,
         ]
-
         return this.multiply(persp_matrix.elements);
     }
 

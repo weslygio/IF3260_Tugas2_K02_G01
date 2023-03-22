@@ -13,8 +13,8 @@ const slider_cr = document.getElementById("cr");
 const slider_cg = document.getElementById("cg");
 const slider_cb = document.getElementById("cb");
 
-var rx = 0.83;
-var ry = 0.3;
+var rx = 0.0;
+var ry = 0.0;
 var rz = 0.0;
 var sc = 1.0;
 var tx = 0.0;
@@ -24,8 +24,8 @@ var cr = 0.5;
 var cg = 0.5;
 var cb = 0.5;
 
-var fudgeFactor = 1;
-var z = -3.0;
+var projectionType = "Perspective"
+var z = -4.0;
 
 slider_rx.oninput = function() {
     rx = this.value * Math.PI;
@@ -70,15 +70,8 @@ slider_cb.oninput = function() {
 document.getElementById("dropdown").addEventListener("change", updateProjection);
 function updateProjection() {
     var dropdown = document.getElementById("dropdown");
-    var selectedValue = dropdown.value;
-    console.log(selectedValue);
-    if (selectedValue == 'Perspective') {
-        z = -4.0;
-        fudgeFactor = 1;
-    } else if (selectedValue == 'Orthographic') {
-        z = -5.0;
-        fudgeFactor = 0;
-    }
+    projectionType = dropdown.value;
+    console.log(projectionType);
     // Do something with the selected value here
   }
 
@@ -121,12 +114,7 @@ window.onload = async () => {
 
     // Get object information
     const objectInfo = await initObject(gl);
-    var fudgeLocation = gl.getUniformLocation(shaderProgram, "u_fudgeFactor");
-
-
     function render() {
-        // Set the fudgeFactor
-        gl.uniform1f(fudgeLocation, fudgeFactor);
         
         // Reset canvas
         gl.viewport(0, 0, canvas.width, canvas.height);
@@ -141,16 +129,18 @@ window.onload = async () => {
         const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
         const zNear = 0.1;
         const zFar = 100.0;
+        const angle = 45;
+
         // const projectionMatrix2 = mat4.create();
         // mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
         // mat4.translate(projectionMatrix, projectionMatrix, [0, 0, z]);
 
         var projectionMatrix = new Matrix();
-
-        projectionMatrix.fill(projectionMatrix.perspective(fieldOfView, aspect, zNear, zFar));
+        projectionMatrix.fill(projectionMatrix.projection(projectionType, fieldOfView, aspect, zNear, zFar,angle));
         projectionMatrix.translate(0, 0, z);
 
         // console.log(projectionMatrix);
+        // console.log(projectionType);
 
         // Draw the object
         drawObject(gl, programInfo, objectInfo, projectionMatrix);
