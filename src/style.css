@@ -3,15 +3,30 @@ h1 {
     padding: 10px;
 }
 
+h2 {
+    font-size: large;
+    margin: 0px;
+}
+
+p {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin: 0px;
+}
+
 .tool {
     display: flex;
     padding: 0px 20px;
 }
 
+button {
+    margin: 0px 1vw;
+}
+
 canvas {
     float: left;
     width: 60vw;
-    height: 45vw;
+    height: 40vw;
 }
 
 .settings {
@@ -19,7 +34,15 @@ canvas {
     width: auto;
 }
 
-.position {
+.object-position {
+    display: flex;
+}
+
+.camera {
+    display: flex;
+}
+
+.light {
     display: flex;
 }
 
@@ -27,8 +50,20 @@ canvas {
     margin-left: 20px;
 }
 
+.rotation {
+    margin-left: 20px;
+}
+
 .color {
     display: flex;
+}
+
+.color-picker {
+    width: 100%;
+}
+
+select {
+    width: 100%;
 }
 
 .slider {

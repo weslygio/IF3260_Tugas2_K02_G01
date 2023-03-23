@@ -7,69 +7,91 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
-        integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
-        crossorigin="anonymous" defer>
-    </script>
-    <script src="lib/MatrixClass.js"></script>
     <script src="script.js" type="module"></script>
 </head>
 
 <body>
-    <h1>Hollow Object</h1>
-
+    <br>
     <div class="tool">
-        <canvas id="glcanvas" width="640px" height="480px"></canvas>
-
+        <div>
+            <button>Help</button>
+            <button id="reset-button">Reset</button>
+            <p></p>
+            <canvas id="glcanvas" width="1440px" height="1080px"></canvas>
+        </div>
+        
         <div class="settings">
-            <div class="position">
-                <div class="rotate_and_scale">
+            <h2>Object</h2>
+            <div class="object-position">    
+                <div class="rotate-and-scale">
                     <p>Rotation about x-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" value="0.09" class="slider" id="rx">
+                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="orx">
 
                     <p>Rotation about y-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" value="-0.10" class="slider" id="ry">
+                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="ory">
 
                     <p>Rotation about z-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" value="0" class="slider" id="rz">
+                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="orz">
 
                     <p>Scale</p>
-                    <input type="range" min="-10" max="10" step="0.1" value="0" class="slider" id="sc">
+                    <input type="range" min="-2" max="2" step="0.01" class="slider" id="osc">
                 </div>
 
                 <div class="translate">
                     <p>Translation in x-axis</p>
-                    <input type="range" min="-10" max="10" step="0.1" value="0" class="slider" id="tx">
+                    <input type="range" min="-10" max="10" step="0.1" class="slider" id="otx">
 
                     <p>Translation in y-axis</p>
-                    <input type="range" min="-10" max="10" step="0.1" value="0" class="slider" id="ty">
+                    <input type="range" min="-10" max="10" step="0.1" class="slider" id="oty">
 
                     <p>Translation in z-axis</p>
-                    <input type="range" min="-10" max="10" step="0.1" value="0" class="slider" id="tz">
+                    <input type="range" min="-10" max="10" step="0.1" class="slider" id="otz">
                 </div>
             </div>
+            <br>
 
-            <p style="margin-top: 30px; margin-bottom: -5px"><b>Object Color</b></p>
-            <div class="color">
-                <div>
-                    <p>Red</p>
-                        <input type="range" min="0" max="1" step="0.004" value="0.5" class="slider" id="cr">
-                    <p>Green</p>
-                        <input type="range" min="0" max="1" step="0.004" value="0.5" class="slider" id="cg">
+            <h2>Camera</h2>
+            <div class="camera">
+                <div class="radius-and-projection">
+                    <p>Radius</p>
+                    <input type="range" min="0" max="20" step="0.1" class="slider" id="crd">
+
+                    <p>Select a projection:</p>
+                    <select id="cpj">
+                        <option value="Perspective">Perspective</option>
+                        <option value="Oblique">Oblique</option>
+                        <option value="Orthographic">Orthographic</option>
+                    </select>
                 </div>
+                
+                <div class="rotation">
+                    <p>Rotation about x-axis</p>
+                    <input type="range" min="-1" max="1" step="0.01"  class="slider" id="crx">
 
-                <div>
-                    <p>Blue</p>
-                    <input type="range" min="0" max="1" step="0.004" value="0.5" class="slider" id="cb">
+                    <p>Rotation about y-axis</p>
+                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="cry">
                 </div>
             </div>
+            <br>
 
-            <label for="Projection">Select a projection:</label>
-            <select id="dropdown">
-                <option value="Perspective">Perspective</option>
-                <option value="Oblique">Oblique</option>
-                <option value="Orthographic">Orthographic</option>
-            </select>
+            <h2>Light</h2>
+            <div class="light">
+                <div class="radius-and-color">
+                    <p>Radius</p>
+                    <input type="range" min="0" max="20" step="0.1" class="slider" id="lrd">
+
+                    <p>Select light's color:</p>
+                    <input type="color" value="#ff0000" class="color-picker" id="lcl">
+                </div>
+                
+                <div class="rotation">
+                    <p>Rotation about x-axis</p>
+                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="lrx">
+
+                    <p>Rotation about y-axis</p>
+                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="lry">
+                </div>
+            </div>
 
         </div>
     </div>

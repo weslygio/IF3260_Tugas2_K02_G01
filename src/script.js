@@ -1,81 +1,58 @@
+import Matrix from "./lib/MatrixClass.js"
 import Vec3 from "./lib/Vec3.js"
 import Point3 from "./lib/Point3.js"
 import initShaderProgram from "./lib/shader_utils.js"
 
-const slider_rx = document.getElementById("rx");
-const slider_ry = document.getElementById("ry");
-const slider_rz = document.getElementById("rz");
-const slider_sc = document.getElementById("sc");
-const slider_tx = document.getElementById("tx");
-const slider_ty = document.getElementById("ty");
-const slider_tz = document.getElementById("tz");
-const slider_cr = document.getElementById("cr");
-const slider_cg = document.getElementById("cg");
-const slider_cb = document.getElementById("cb");
+const slider_orx = document.getElementById("orx");
+const slider_ory = document.getElementById("ory");
+const slider_orz = document.getElementById("orz");
+const slider_osc = document.getElementById("osc");
+const slider_otx = document.getElementById("otx");
+const slider_oty = document.getElementById("oty");
+const slider_otz = document.getElementById("otz");
 
-var rx = 0.0;
-var ry = 0.0;
-var rz = 0.0;
-var sc = 1.0;
-var tx = 0.0;
-var ty = 0.0;
-var tz = 0.0;
-var cr = 0.5;
-var cg = 0.5;
-var cb = 0.5;
+const slider_crd = document.getElementById("crd");
+const slider_crx = document.getElementById("crx");
+const slider_cry = document.getElementById("cry");
+const dropdown_cpj = document.getElementById("cpj");
 
-var projectionType = "Perspective"
-var z = -4.0;
+const slider_lrd = document.getElementById("lrd");
+const slider_lrx = document.getElementById("lrx");
+const slider_lry = document.getElementById("lry");
+const picker_lcl = document.getElementById("lcl");
 
-slider_rx.oninput = function() {
-    rx = this.value * Math.PI;
+function resetDefault() {
+    slider_orx.value = 0.09;
+    slider_ory.value = -0.10;
+    slider_orz.value = 0.0;
+    slider_osc.value = 0.0;
+    slider_otx.value = 0.0;
+    slider_oty.value = 0.0;
+    slider_otz.value = 0.0;
+    
+    slider_crd.value = 10.0;
+    slider_crx.value = 0.0;
+    slider_cry.value = 0.0;
+    dropdown_cpj.value = "Perspective";
+
+    slider_lrd.value = 0.0;
+    slider_lrx.value = 0.0;
+    slider_lry.value = 0.0;
+    picker_lcl.value = "#ffffff";
 }
 
-slider_ry.oninput = function() {
-    ry = this.value * Math.PI;
+function colorToArray(color) {
+    return [
+        parseInt(color.slice(1, 3), 16) / 255,
+        parseInt(color.slice(3, 5), 16) / 255,
+        parseInt(color.slice(5, 7), 16) / 255,
+        1.0
+    ];
 }
-
-slider_rz.oninput = function() {
-    rz = this.value * Math.PI;
-}
-
-slider_sc.oninput = function() {
-    sc = Math.pow(Math.E, 0.2 * this.value);
-}
-
-slider_tx.oninput = function() {
-    tx = -this.value;
-}
-
-slider_ty.oninput = function() {
-    ty = -this.value;
-}
-
-slider_tz.oninput = function() {
-    tz = -this.value;
-}
-
-slider_cr.oninput = function() {
-    cr = this.value;
-}
-
-slider_cg.oninput = function() {
-    cg = this.value;
-}
-
-slider_cb.oninput = function() {
-    cb = this.value;
-}
-
-document.getElementById("dropdown").addEventListener("change", updateProjection);
-function updateProjection() {
-    var dropdown = document.getElementById("dropdown");
-    projectionType = dropdown.value;
-    console.log(projectionType);
-    // Do something with the selected value here
-  }
 
 window.onload = async () => {
+    resetDefault();
+
     /** @type {HTMLCanvasElement} */
     const canvas = document.querySelector('#glcanvas');
     /** @type {WebGLRenderingContext} */
@@ -136,8 +113,8 @@ window.onload = async () => {
         // mat4.translate(projectionMatrix, projectionMatrix, [0, 0, z]);
 
         var projectionMatrix = new Matrix();
-        projectionMatrix.fill(projectionMatrix.projection(projectionType, fieldOfView, aspect, zNear, zFar,angle));
-        projectionMatrix.translate(0, 0, z);
+        projectionMatrix.fill(projectionMatrix.projection(dropdown_cpj.value, fieldOfView, aspect, zNear, zFar,angle));
+        projectionMatrix.translate(0, 0, -slider_crd.value);
 
         // console.log(projectionMatrix);
         // console.log(projectionType);
@@ -165,10 +142,10 @@ async function initObject(gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.normals), gl.STATIC_DRAW);
 
-    // Colors
-    const colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.colors), gl.STATIC_DRAW);
+    // // Colors
+    // const colorBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.colors), gl.STATIC_DRAW);
 
     console.log(object);
 
@@ -176,7 +153,7 @@ async function initObject(gl) {
         length: object.length,
         positions: positionBuffer,
         normals: normalBuffer,
-        colors: colorBuffer
+        // colors: colorBuffer
     };
 }
 
@@ -196,10 +173,10 @@ function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, buffer
     // const worldProjectionMatrix = mat4.create();
     // mat4.multiply(worldProjectionMatrix, projectionMatrix, worldMatrix);
 
-    worldMatrix.translate(tx, ty, tz);
-    worldMatrix.xRotate(rx);
-    worldMatrix.yRotate(ry);
-    worldMatrix.zRotate(rz);
+    worldMatrix.translate(slider_otx.value, slider_oty.value, slider_otz.value);
+    worldMatrix.xRotate(slider_orx.value * Math.PI);
+    worldMatrix.yRotate(slider_ory.value * Math.PI);
+    worldMatrix.zRotate(slider_orz.value * Math.PI);
 
     // console.log(worldMatrix.elements)
 
@@ -225,18 +202,18 @@ function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, buffer
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexNormal);
     
     // Color attribute
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.colors);
-    gl.vertexAttribPointer(programInfo.attribLocations.vertexColor, 4, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, buffers.colors);
+    // gl.vertexAttribPointer(programInfo.attribLocations.vertexColor, 4, gl.FLOAT, false, 0, 0);
+    // gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 
     // Uniforms
     gl.uniformMatrix4fv(programInfo.uniformLocations.worldMatrix, false, worldMatrix.elements);
     gl.uniformMatrix4fv(programInfo.uniformLocations.worldProjectionMatrix, false, worldProjectionMatrix.elements);
     gl.uniformMatrix4fv(programInfo.uniformLocations.worldInverseTransposeMatrix, false, worldInverseTransposeMatrix.elements);
-    gl.uniform4fv(programInfo.uniformLocations.lightWorldPosition, [tx,ty,tz,1]);
+    gl.uniform4fv(programInfo.uniformLocations.lightWorldPosition, [0,0,0,1]);
     gl.uniform4fv(programInfo.uniformLocations.ambientProduct, [0.2, 0.2, 0.2, 1.0]);
-    gl.uniform4fv(programInfo.uniformLocations.diffuseProduct, [cr, cg, cb, 1.0]);
-    gl.uniform4fv(programInfo.uniformLocations.specularProduct, [cr, cg, cb, 1.0]);
+    gl.uniform4fv(programInfo.uniformLocations.diffuseProduct, colorToArray(picker_lcl.value));
+    gl.uniform4fv(programInfo.uniformLocations.specularProduct, colorToArray(picker_lcl.value));
     gl.uniform1f(programInfo.uniformLocations.shininess, 200);
     
     // Draw Array
@@ -248,7 +225,7 @@ function modelToObject(model) {
     object.length = model.geometry.indices.length;
     object.positions = getGeometry(model);
     object.normals = getNormal(model);
-    object.colors = getColor(model);
+    // object.colors = getColor(model);
     return object;
 }
 

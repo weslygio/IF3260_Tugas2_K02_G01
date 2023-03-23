@@ -1,5 +1,5 @@
 // create new class matrix
-class Matrix {
+export default class Matrix {
     constructor() {
         this.elements = new Float32Array(16);
         this.identity();
@@ -224,6 +224,7 @@ class Matrix {
             0, 0, (far + near) * nf, -1,
             0, 0, 2 * far * near * nf, 0,
         ]
+
         return this.multiply(persp_matrix.elements);
     }
 
