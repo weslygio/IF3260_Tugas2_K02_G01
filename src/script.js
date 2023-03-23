@@ -152,7 +152,7 @@ window.onload = async () => {
 
 // Initialize object
 async function initObject(gl) {
-    const model = JSON.parse(await (await fetch("../test/cube.json", {cache: "no-cache"})).text());
+    const model = JSON.parse(await (await fetch("../test/pyramid.json", {cache: "no-cache"})).text());
     const object = modelToObject(model);
 
     // Positions

@@ -167,21 +167,31 @@ class Matrix {
             return this.orthographic(fov, aspect, near, far);
         } else if (projection == "Oblique") {
             this.elements = this.orthographic(fov, aspect, near, far);
-            return this.oblique(angle);
+
+            return this.oblique();
         }
     }
 
     //oblique matrix
-    oblique(angle) {
+    oblique() {
         var ortho_matrix = new Matrix();
-        var theta = Math.PI / 4; // angle of obliqueness in radians
+        var theta = Math.PI / 3; // angle of obliqueness in radians
         var d = 1; // distance of projection plane from viewer
+        var cot_theta = 1/Math.tan(theta); // cotangent of theta
+        var cot_phi = 1/Math.tan(theta*2); // cotangent of phi
+
+        // ortho_matrix.elements = [
+        //     1/Math.cos(theta), 0, -1/d, 0,
+        //     0, 1, 0, 0,
+        //     0, 0, 1, 0,
+        //     0, 0, 0, 1,
+        // ]
 
         ortho_matrix.elements = [
-            1/Math.cos(theta), 0, -1/d, 0,
+            1, 0, 0, 0,
             0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1,
+            cot_theta, cot_phi, 1, 0,
+            2.2, -2.2, 0, 1,
         ]
 
         console.log(ortho_matrix.elements);
@@ -204,7 +214,7 @@ class Matrix {
 
         ortho_matrix.elements = [
             -2 * lr, 0, 0, 0,
-            0, -2 * bt, 0, 0,
+            0, 2 * bt, 0, 0,
             0, 0, 2 * nf, 0,
             (left + right) * lr, (top + bottom) * bt, (far + near) * nf, 1,
         ]
