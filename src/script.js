@@ -28,6 +28,13 @@ const picker_lcl = document.getElementById("lcl");
 button_reset.onclick = resetDefault;
 resetDefault();
 
+/** @type {HTMLCanvasElement} */
+const canvas = document.querySelector('#glcanvas');
+/** @type {WebGLRenderingContext} */
+const gl = canvas.getContext('webgl');
+var objectInfo;
+
+
 function resetDefault() {
     checkbox_shading.checked = true;
 
@@ -60,11 +67,6 @@ function colorToArray(color) {
 }
 
 window.onload = async () => {
-    /** @type {HTMLCanvasElement} */
-    const canvas = document.querySelector('#glcanvas');
-    /** @type {WebGLRenderingContext} */
-    const gl = canvas.getContext('webgl');
-
     // Error alert
     if (!gl) {
         alert('Unable to initialize WebGL. Your browser or machine may not support it.');
@@ -99,7 +101,7 @@ window.onload = async () => {
     };
 
     // Get object information
-    const objectInfo = await initObject(gl);
+    // const objectInfo = await initObject(gl);
 
     // Lighting model
     const lightInfo = {
@@ -129,28 +131,70 @@ window.onload = async () => {
         const zFar = 100.0;
         const angle = 45;
 
-        // const projectionMatrix2 = mat4.create();
-        // mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-        // mat4.translate(projectionMatrix, projectionMatrix, [0, 0, z]);
-
         var projectionMatrix = new Matrix();
         projectionMatrix.fill(projectionMatrix.projection(dropdown_cpj.value, fieldOfView, aspect, zNear, zFar, angle));
-        projectionMatrix.translate(0, 0, -slider_crd.value);
+        // projectionMatrix.translate(0, 0, -slider_crd.value);
 
+        // Move Camera
+        var fPosition = [0, 0, 0];
+        var cameraMatrix = new Matrix();
+        
+        cameraMatrix.xRotate(slider_cry.value*Math.PI);
+        cameraMatrix.yRotate(slider_crx.value*Math.PI);
+        cameraMatrix.translate(0, 0, slider_crd.value);
+        
+        var cameraPosition = [
+            cameraMatrix.elements[12],
+            cameraMatrix.elements[13],
+            cameraMatrix.elements[14],
+        ];
+        
+        var up = [0, 1, 0];
+        cameraMatrix.elements = cameraMatrix.lookAt(cameraPosition, fPosition, up);
+
+        cameraMatrix.elements = cameraMatrix.invert().elements;
+        projectionMatrix.fill(projectionMatrix.multiply(cameraMatrix.elements));
+    
         // console.log(projectionMatrix);
         // console.log(projectionType);
 
-        // Draw the object
-        drawObject(gl, programInfo, objectInfo, lightInfo, projectionMatrix);
+        // Draw the object if object is loaded
+        if (objectInfo) {
+            drawObject(gl, programInfo, objectInfo, lightInfo, projectionMatrix);
+        }
 
         requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
 }
 
+const openDesign = document.getElementById('open-design');
+openDesign.openDesign = (e) => {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.setAttribute('accept', 'application/json, .txt');
+    input.onchange = e => {
+        var file = e.target.files[0];
+
+        if(!file){
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.readAsText(file, 'UTF-8');
+
+        reader.onload = readerEvent => {
+            var content = readerEvent.target.result;
+            // temp_objects = JSON.parse(content);
+            objectInfo = initObject(gl, content);
+        }
+    }
+    input.click();
+}
+
 // Initialize object
-async function initObject(gl) {
-    const model = JSON.parse(await (await fetch("../test/pyramid.json", {cache: "no-cache"})).text());
+function initObject(gl, content) {
+    const model = JSON.parse(content);
     const object = modelToObject(model);
 
     // Positions

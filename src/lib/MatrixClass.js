@@ -75,6 +75,44 @@ export default class Matrix {
         return result;
     }
 
+    cross(a, b) {
+        return [a[1] * b[2] - a[2] * b[1],
+                a[2] * b[0] - a[0] * b[2],
+                a[0] * b[1] - a[1] * b[0]];
+      }
+
+    subtractVectors(a, b) {
+        return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+    }
+
+    normalize(v) {
+        var length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        
+        // make sure we don't divide by 0.
+        if (length > 0.0001) {
+          return [v[0] / length, v[1] / length, v[2] / length];
+        } else {
+          return [0, 0, 0];
+        }
+      }
+
+    lookAt(cameraPosition, target, up) {
+        var zAxis = this.normalize(
+            this.subtractVectors(cameraPosition, target));
+        var xAxis = this.normalize(this.cross(up, zAxis));
+        var yAxis = this.normalize(this.cross(zAxis, xAxis));
+        
+        return [
+            xAxis[0], xAxis[1], xAxis[2], 0,
+            yAxis[0], yAxis[1], yAxis[2], 0,
+            zAxis[0], zAxis[1], zAxis[2], 0,
+            cameraPosition[0],
+            cameraPosition[1],
+            cameraPosition[2],
+            1,
+        ];
+    }
+
     multiplyVector(v) {
         var a = this.elements;
         var result = [
@@ -86,6 +124,7 @@ export default class Matrix {
 
         return result;
     }
+
 
     // translate matrix
     translate(tx, ty, tz) {
@@ -203,10 +242,8 @@ export default class Matrix {
             1, 0, 0, 0,
             0, 1, 0, 0,
             cot_theta, cot_phi, 1, 0,
-            2.2, -2.2, 0, 1,
+            6, -5.2, 0, 1,
         ]
-
-        console.log(ortho_matrix.elements);
 
         return this.multiply(ortho_matrix.elements);
         
@@ -228,7 +265,7 @@ export default class Matrix {
             -2 * lr, 0, 0, 0,
             0, 2 * bt, 0, 0,
             0, 0, 2 * nf, 0,
-            (left + right) * lr, (top + bottom) * bt, (far + near) * nf, 1,
+            (left + right) * lr, (top + bottom) * bt-0.5, (far + near) * nf, 1,
         ]
 
         return this.multiply(ortho_matrix.elements);
