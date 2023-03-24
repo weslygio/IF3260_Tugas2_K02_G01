@@ -10,10 +10,14 @@ const checkbox_shading = document.getElementById("shading-toggle");
 const slider_orx = document.getElementById("orx");
 const slider_ory = document.getElementById("ory");
 const slider_orz = document.getElementById("orz");
-const slider_osc = document.getElementById("osc");
+
 const slider_otx = document.getElementById("otx");
 const slider_oty = document.getElementById("oty");
 const slider_otz = document.getElementById("otz");
+
+const slider_osx = document.getElementById("osx");
+const slider_osy = document.getElementById("osy");
+const slider_osz = document.getElementById("osz");
 
 const slider_crd = document.getElementById("crd");
 const slider_crx = document.getElementById("crx");
@@ -34,10 +38,14 @@ function resetDefault() {
     slider_orx.value = 0.09;
     slider_ory.value = -0.10;
     slider_orz.value = 0.0;
-    slider_osc.value = 0.0;
+
     slider_otx.value = 0.0;
     slider_oty.value = 0.0;
     slider_otz.value = 0.0;
+
+    slider_osx.value = 0.0;
+    slider_osy.value = 0.0;
+    slider_osz.value = 0.0;
     
     slider_crd.value = 10.0;
     slider_crx.value = 0.0;
@@ -52,10 +60,14 @@ function resetDefault() {
     document.getElementById('orx_val').innerHTML = slider_orx.value;
     document.getElementById('ory_val').innerHTML = slider_ory.value;
     document.getElementById('orz_val').innerHTML = slider_orz.value;
-    document.getElementById('osc_val').innerHTML = slider_osc.value;
+
     document.getElementById('otx_val').innerHTML = slider_otx.value;
     document.getElementById('oty_val').innerHTML = slider_oty.value;
     document.getElementById('otz_val').innerHTML = slider_otz.value;
+
+    document.getElementById('osx_val').innerHTML = slider_osx.value;
+    document.getElementById('osy_val').innerHTML = slider_osy.value;
+    document.getElementById('osz_val').innerHTML = slider_osz.value;
 
     document.getElementById('crd_val').innerHTML = slider_crd.value;
     document.getElementById('crx_val').innerHTML = slider_crx.value;
@@ -237,9 +249,9 @@ function drawObject(programInfo, lightInfo, projectionMatrix) {
     worldMatrix.yRotate(slider_ory.value * Math.PI);
     worldMatrix.zRotate(slider_orz.value * Math.PI);
     worldMatrix.scale(
-        Math.pow(Math.E, slider_osc.value), 
-        Math.pow(Math.E, slider_osc.value), 
-        Math.pow(Math.E, slider_osc.value)
+        Math.pow(Math.E, slider_osx.value), 
+        Math.pow(Math.E, slider_osy.value), 
+        Math.pow(Math.E, slider_osz.value)
     );
 
     worldProjectionMatrix.elements = projectionMatrix.multiply(worldMatrix.elements);

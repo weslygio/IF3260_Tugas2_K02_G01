@@ -39,8 +39,11 @@
                     <p>Rotation about z-axis: <label id="orz_val"></label>π</p>
                     <input type="range" min="-1" max="1" step="0.01" oninput="document.getElementById('orz_val').innerHTML = this.value" class="slider" id="orz">
 
-                    <p>Scale: e<sup><label id="osc_val"></label></sup></p>
-                    <input type="range" min="-2" max="2" step="0.01" oninput="document.getElementById('osc_val').innerHTML = this.value" class="slider" id="osc">
+                    <p>Scale on x-axis: e<sup><label id="osx_val"></label></sup></p>
+                    <input type="range" min="-2" max="2" step="0.01" oninput="document.getElementById('osx_val').innerHTML = this.value" class="slider" id="osx">
+
+                    <p>Scale on y-axis: e<sup><label id="osy_val"></label></sup></p>
+                    <input type="range" min="-2" max="2" step="0.01" oninput="document.getElementById('osy_val').innerHTML = this.value" class="slider" id="osy">
                 </div>
 
                 <div class="translate">
@@ -52,6 +55,9 @@
 
                     <p>Translation in z-axis: <label id="otz_val"></label></p>
                     <input type="range" min="-10" max="10" step="0.1" oninput="document.getElementById('otz_val').innerHTML = this.value" class="slider" id="otz">
+
+                    <p>Scale on z-axis: e<sup><label id="osz_val"></label></sup></p>
+                    <input type="range" min="-2" max="2" step="0.01" oninput="document.getElementById('osz_val').innerHTML = this.value" class="slider" id="osz">
                 </div>
             </div>
             <br>
