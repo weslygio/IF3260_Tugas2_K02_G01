@@ -3,6 +3,10 @@ import Vec3 from "./lib/Vec3.js"
 import Point3 from "./lib/Point3.js"
 import initShaderProgram from "./lib/shader_utils.js"
 
+const button_help = document.getElementById("help-button");
+const button_reset = document.getElementById("reset-button");
+const checkbox_shading = document.getElementById("shading-toggle");
+
 const slider_orx = document.getElementById("orx");
 const slider_ory = document.getElementById("ory");
 const slider_orz = document.getElementById("orz");
@@ -21,7 +25,12 @@ const slider_lrx = document.getElementById("lrx");
 const slider_lry = document.getElementById("lry");
 const picker_lcl = document.getElementById("lcl");
 
+button_reset.onclick = resetDefault;
+resetDefault();
+
 function resetDefault() {
+    checkbox_shading.checked = true;
+
     slider_orx.value = 0.09;
     slider_ory.value = -0.10;
     slider_orz.value = 0.0;
@@ -51,8 +60,6 @@ function colorToArray(color) {
 }
 
 window.onload = async () => {
-    resetDefault();
-
     /** @type {HTMLCanvasElement} */
     const canvas = document.querySelector('#glcanvas');
     /** @type {WebGLRenderingContext} */
@@ -82,26 +89,40 @@ window.onload = async () => {
             worldProjectionMatrix: gl.getUniformLocation(shaderProgram, 'u_m4WorldProjection'),
             worldInverseTransposeMatrix: gl.getUniformLocation(shaderProgram, 'u_m4WorldInverseTranspose'),
             lightWorldPosition: gl.getUniformLocation(shaderProgram, 'u_v4LightWorldPosition'),
+            lightAttenuation: gl.getUniformLocation(shaderProgram, 'u_v3LightAttenuation'),
             ambientProduct: gl.getUniformLocation(shaderProgram, 'u_v4AmbientProduct'),
             diffuseProduct: gl.getUniformLocation(shaderProgram, 'u_v4DiffuseProduct'),
             specularProduct: gl.getUniformLocation(shaderProgram, 'u_v4SpecularProduct'),
             shininess: gl.getUniformLocation(shaderProgram, 'u_fShininess'),
+            useLighting: gl.getUniformLocation(shaderProgram, 'u_bUseLighting'),
         }
     };
 
     // Get object information
     const objectInfo = await initObject(gl);
+
+    // Lighting model
+    const lightInfo = {
+        ambient: [0.2, 0.2, 0.2, 1.0],
+        diffuse: colorToArray(picker_lcl.value),
+        specular: colorToArray(picker_lcl.value),
+        attenuation: [0.5, 0.025, 0.1],
+    }
+
     function render() {
-        
         // Reset canvas
         gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.clearColor(0.5, 1.0, 1.0, 1.0);
+        gl.clearColor(0.5, 1.0, 1.0, 0.6);
         gl.clearDepth(1.0);
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        // Set camera perspective animation
+        // Update light
+        lightInfo.diffuse = colorToArray(picker_lcl.value);
+        lightInfo.specular = colorToArray(picker_lcl.value);
+
+        // Set camera perspective
         const fieldOfView = 45 * Math.PI / 180;   // in radians
         const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
         const zNear = 0.1;
@@ -113,14 +134,14 @@ window.onload = async () => {
         // mat4.translate(projectionMatrix, projectionMatrix, [0, 0, z]);
 
         var projectionMatrix = new Matrix();
-        projectionMatrix.fill(projectionMatrix.projection(dropdown_cpj.value, fieldOfView, aspect, zNear, zFar,angle));
+        projectionMatrix.fill(projectionMatrix.projection(dropdown_cpj.value, fieldOfView, aspect, zNear, zFar, angle));
         projectionMatrix.translate(0, 0, -slider_crd.value);
 
         // console.log(projectionMatrix);
         // console.log(projectionType);
 
         // Draw the object
-        drawObject(gl, programInfo, objectInfo, projectionMatrix);
+        drawObject(gl, programInfo, objectInfo, lightInfo, projectionMatrix);
 
         requestAnimationFrame(render);
     }
@@ -142,82 +163,71 @@ async function initObject(gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.normals), gl.STATIC_DRAW);
 
-    // // Colors
-    // const colorBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.colors), gl.STATIC_DRAW);
-
-    console.log(object);
-
     return {
         length: object.length,
         positions: positionBuffer,
         normals: normalBuffer,
-        // colors: colorBuffer
+        material: object.material,
     };
 }
 
 // Draw object
-function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, buffers, projectionMatrix) {
+function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, objectInfo, lightInfo, projectionMatrix) {
     gl.useProgram(programInfo.program);
-    
-    // const worldMatrix = mat4.create();
-    //mat4.translate(worldMatrix, worldMatrix, [tx, ty, tz]);
-    // mat4.rotateX(worldMatrix, worldMatrix, rx);
-    // mat4.rotateY(worldMatrix, worldMatrix, ry);
-    // mat4.rotateZ(worldMatrix, worldMatrix, rz);
 
+    // Object
     var worldMatrix = new Matrix();
     var worldProjectionMatrix = new Matrix();
-
-    // const worldProjectionMatrix = mat4.create();
-    // mat4.multiply(worldProjectionMatrix, projectionMatrix, worldMatrix);
 
     worldMatrix.translate(slider_otx.value, slider_oty.value, slider_otz.value);
     worldMatrix.xRotate(slider_orx.value * Math.PI);
     worldMatrix.yRotate(slider_ory.value * Math.PI);
     worldMatrix.zRotate(slider_orz.value * Math.PI);
 
-    // console.log(worldMatrix.elements)
-
     worldProjectionMatrix.elements = projectionMatrix.multiply(worldMatrix.elements);
-
-    // console.log(worldProjectionMatrix.elements);
-
-    // const worldInverseTransposeMatrix = mat4.create();
-    // mat4.invert(worldInverseTransposeMatrix, worldMatrix);
-    // mat4.transpose(worldInverseTransposeMatrix, worldInverseTransposeMatrix);
 
     var worldInverseTransposeMatrix = new Matrix();
     worldInverseTransposeMatrix.elements = worldMatrix.invert().transpose().elements;
+
+    // Lighting
+    var u = slider_lrx.value * Math.PI;
+    var v = slider_lry.value * Math.PI;
+    var lightWorldPosition = [
+        slider_lrd.value * Math.sin(u) * Math.cos(v), 
+        slider_lrd.value * Math.sin(v), 
+        slider_lrd.value * Math.cos(u) * Math.cos(v), 
+        1.0
+    ];
+
+    const vecmult = (a, b) => a.map((val, idx) => val * b[idx])
+    var ambientProduct = vecmult(lightInfo.ambient, objectInfo.material.ambient);
+    var diffuseProduct = vecmult(lightInfo.diffuse, objectInfo.material.diffuse);
+    var specularProduct = vecmult(lightInfo.specular, objectInfo.material.specular);
     
     // Position attribute
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.positions);
+    gl.bindBuffer(gl.ARRAY_BUFFER, objectInfo.positions);
     gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
 
     // Normal attribute
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normals);
+    gl.bindBuffer(gl.ARRAY_BUFFER, objectInfo.normals);
     gl.vertexAttribPointer(programInfo.attribLocations.vertexNormal, 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexNormal);
-    
-    // Color attribute
-    // gl.bindBuffer(gl.ARRAY_BUFFER, buffers.colors);
-    // gl.vertexAttribPointer(programInfo.attribLocations.vertexColor, 4, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(programInfo.attribLocations.vertexColor);
 
     // Uniforms
     gl.uniformMatrix4fv(programInfo.uniformLocations.worldMatrix, false, worldMatrix.elements);
     gl.uniformMatrix4fv(programInfo.uniformLocations.worldProjectionMatrix, false, worldProjectionMatrix.elements);
     gl.uniformMatrix4fv(programInfo.uniformLocations.worldInverseTransposeMatrix, false, worldInverseTransposeMatrix.elements);
-    gl.uniform4fv(programInfo.uniformLocations.lightWorldPosition, [0,0,0,1]);
-    gl.uniform4fv(programInfo.uniformLocations.ambientProduct, [0.2, 0.2, 0.2, 1.0]);
-    gl.uniform4fv(programInfo.uniformLocations.diffuseProduct, colorToArray(picker_lcl.value));
-    gl.uniform4fv(programInfo.uniformLocations.specularProduct, colorToArray(picker_lcl.value));
+    gl.uniform4fv(programInfo.uniformLocations.lightWorldPosition, lightWorldPosition);
+    gl.uniform3fv(programInfo.uniformLocations.lightAttenuation, lightInfo.attenuation);
+    gl.uniform4fv(programInfo.uniformLocations.ambientProduct, ambientProduct);
+    gl.uniform4fv(programInfo.uniformLocations.diffuseProduct, diffuseProduct);
+    gl.uniform4fv(programInfo.uniformLocations.specularProduct, specularProduct);
     gl.uniform1f(programInfo.uniformLocations.shininess, 200);
+    gl.uniform1f(programInfo.uniformLocations.useLighting, checkbox_shading.checked);
     
     // Draw Array
-    gl.drawArrays(gl.TRIANGLES, 0, buffers.length);
+    gl.drawArrays(gl.TRIANGLES, 0, objectInfo.length);
 }
 
 function modelToObject(model) {
@@ -225,7 +235,7 @@ function modelToObject(model) {
     object.length = model.geometry.indices.length;
     object.positions = getGeometry(model);
     object.normals = getNormal(model);
-    // object.colors = getColor(model);
+    object.material = getMaterial(model);
     return object;
 }
 
@@ -260,9 +270,12 @@ function getNormal(model) {
     return normals;
 }
 
-function getColor(model) {
-    const colors = [];
-    model.geometry.indices.forEach(_ => colors.push(0.8, 0.5, 0.5, 1.0));    // Hardcode color
-    return colors;
+function getMaterial(model) {
+    const material = {};
+    material.ambient = model.material.ambient;
+    material.diffuse = model.material.diffuse;
+    material.specular = model.material.specular;
+    material.shininess = model.material.shininess;
+    return material;
 }
 

@@ -73,7 +73,19 @@ export default class Matrix {
         ];
 
         return result;
-    }   
+    }
+
+    multiplyVector(v) {
+        var a = this.elements;
+        var result = [
+            a[0] * v[0] + a[1] * v[1] + a[2] * v[2] + a[3] * v[3],
+            a[4] * v[0] + a[5] * v[1] + a[6] * v[2] + a[7] * v[3],
+            a[8] * v[0] + a[9] * v[1] + a[10] * v[2] + a[11] * v[3],
+            a[12] * v[0] + a[13] * v[1] + a[14] * v[2] + a[15] * v[3],
+        ];
+
+        return result;
+    }
 
     // translate matrix
     translate(tx, ty, tz) {

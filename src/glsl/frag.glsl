@@ -2,7 +2,9 @@
 
 precision mediump float;
 
+uniform bool u_bUseLighting;
 // Light-Material model
+uniform vec3 u_v3LightAttenuation;
 uniform vec4 u_v4AmbientProduct;
 uniform vec4 u_v4DiffuseProduct;
 uniform vec4 u_v4SpecularProduct;
@@ -13,6 +15,11 @@ varying mediump vec3 v_v3SurfaceToLight;
 varying mediump vec3 v_v3SurfaceToViewer;
  
 void main() {
+    if (!u_bUseLighting) {
+        gl_FragColor = u_v4AmbientProduct;
+        return;
+    }
+
     /*----Modified Phong Lighting Model----*/
 
     vec4 fColor;
@@ -22,9 +29,9 @@ void main() {
     vec3 v3Halfway_N = normalize(v_v3SurfaceToLight_N + v_v3SurfaceToViewer_N);
 
     // Light Attenuation
-    const float a = 0.2;
-    const float b = 0.1;
-    const float c = 0.5;
+    float a = u_v3LightAttenuation.x;
+    float b = u_v3LightAttenuation.y;
+    float c = u_v3LightAttenuation.z;
     float fDistance = distance(vec3(0,0,0), v_v3SurfaceToLight);
     float fAttenuation = 1.0/(a + b * fDistance + c * fDistance * fDistance);
 
