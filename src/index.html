@@ -14,7 +14,7 @@
     <br>
     <div class="tool">
         <div>
-            <button>Help</button>
+            <button id="help-button">Help</button>
             <button id="reset-button">Reset</button>
             <button id="open-design" onclick="openDesign()">Open Design</button>
             Shader
@@ -105,6 +105,21 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <span id="help-close" class="close">&times;</span>
+            <h2>How To Use</h2>
+            <ol>
+                <li>Choose object (*.json) to load with "Open Design" button.</li>
+                <li>Turn on/off shader to show/unshow lighting in object.</li>
+                <li>Use the sliders in "Object" section to change the object's position, rotation, and scale.</li>
+                <li>Use the sliders in "Camera" section to change camera's position.</li>
+                <li>Choose projection type to use: perspective, orthographic, and oblique.</li>
+                <li>Use the sliders in "Light" section to change light's position and color picker to change the light's color.</li>
+            </ol>
         </div>
     </div>
     

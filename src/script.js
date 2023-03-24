@@ -4,6 +4,8 @@ import Point3 from "./lib/Point3.js"
 import initShaderProgram from "./lib/shader_utils.js"
 
 const button_help = document.getElementById("help-button");
+const modal_help = document.getElementById("help-modal");
+const close_help = document.getElementById("help-close");
 const button_reset = document.getElementById("reset-button");
 const checkbox_shading = document.getElementById("shading-toggle");
 
@@ -28,6 +30,21 @@ const slider_lrd = document.getElementById("lrd");
 const slider_lrx = document.getElementById("lrx");
 const slider_lry = document.getElementById("lry");
 const picker_lcl = document.getElementById("lcl");
+
+// Help Modal
+button_help.onclick = function() {
+    modal_help.style.display = "block";
+}
+
+close_help.onclick = function() {
+    modal_help.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal_help) {
+        modal_help.style.display = "none";
+    }
+}
 
 button_reset.onclick = resetDefault;
 resetDefault();
@@ -348,4 +365,3 @@ function getMaterial(model) {
     material.shininess = model.material.shininess;
     return material;
 }
-
