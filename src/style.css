@@ -25,12 +25,12 @@ button {
 
 canvas {
     float: left;
-    width: 60vw;
-    height: 40vw;
+    width: 57vw;
+    height: 38vw;
 }
 
 .settings {
-    margin-left: 20px;
+    margin-left: 30px;
     width: auto;
 }
 
@@ -47,11 +47,11 @@ canvas {
 }
 
 .translate {
-    margin-left: 20px;
+    margin-left: 30px;
 }
 
 .rotation {
-    margin-left: 20px;
+    margin-left: 30px;
 }
 
 .color {
@@ -67,7 +67,7 @@ select {
 }
 
 .slider {
-    width: 180px;
+    width: 200px;
 }
 
 #glcanvas {

@@ -28,13 +28,6 @@ const picker_lcl = document.getElementById("lcl");
 button_reset.onclick = resetDefault;
 resetDefault();
 
-/** @type {HTMLCanvasElement} */
-const canvas = document.querySelector('#glcanvas');
-/** @type {WebGLRenderingContext} */
-const gl = canvas.getContext('webgl');
-var objectInfo;
-
-
 function resetDefault() {
     checkbox_shading.checked = true;
 
@@ -55,6 +48,22 @@ function resetDefault() {
     slider_lrx.value = 0.0;
     slider_lry.value = 0.0;
     picker_lcl.value = "#ffffff";
+
+    document.getElementById('orx_val').innerHTML = slider_orx.value;
+    document.getElementById('ory_val').innerHTML = slider_ory.value;
+    document.getElementById('orz_val').innerHTML = slider_orz.value;
+    document.getElementById('osc_val').innerHTML = slider_osc.value;
+    document.getElementById('otx_val').innerHTML = slider_otx.value;
+    document.getElementById('oty_val').innerHTML = slider_oty.value;
+    document.getElementById('otz_val').innerHTML = slider_otz.value;
+
+    document.getElementById('crd_val').innerHTML = slider_crd.value;
+    document.getElementById('crx_val').innerHTML = slider_crx.value;
+    document.getElementById('cry_val').innerHTML = slider_cry.value;
+
+    document.getElementById('lrd_val').innerHTML = slider_lrd.value;
+    document.getElementById('lrx_val').innerHTML = slider_lrx.value;
+    document.getElementById('lry_val').innerHTML = slider_lry.value;
 }
 
 function colorToArray(color) {
@@ -65,6 +74,13 @@ function colorToArray(color) {
         1.0
     ];
 }
+
+
+/** @type {HTMLCanvasElement} */
+const canvas = document.querySelector('#glcanvas');
+/** @type {WebGLRenderingContext} */
+const gl = canvas.getContext('webgl');
+var objectInfo;
 
 window.onload = async () => {
     // Error alert
@@ -100,9 +116,6 @@ window.onload = async () => {
         }
     };
 
-    // Get object information
-    // const objectInfo = await initObject(gl);
-
     // Lighting model
     const lightInfo = {
         ambient: [0.2, 0.2, 0.2, 1.0],
@@ -133,14 +146,13 @@ window.onload = async () => {
 
         var projectionMatrix = new Matrix();
         projectionMatrix.fill(projectionMatrix.projection(dropdown_cpj.value, fieldOfView, aspect, zNear, zFar, angle));
-        // projectionMatrix.translate(0, 0, -slider_crd.value);
 
         // Move Camera
         var fPosition = [0, 0, 0];
         var cameraMatrix = new Matrix();
         
-        cameraMatrix.xRotate(slider_cry.value*Math.PI);
-        cameraMatrix.yRotate(slider_crx.value*Math.PI);
+        cameraMatrix.xRotate(slider_crx.value*Math.PI);
+        cameraMatrix.yRotate(slider_cry.value*Math.PI);
         cameraMatrix.translate(0, 0, slider_crd.value);
         
         var cameraPosition = [
@@ -154,13 +166,10 @@ window.onload = async () => {
 
         cameraMatrix.elements = cameraMatrix.invert().elements;
         projectionMatrix.fill(projectionMatrix.multiply(cameraMatrix.elements));
-    
-        // console.log(projectionMatrix);
-        // console.log(projectionType);
 
         // Draw the object if object is loaded
         if (objectInfo) {
-            drawObject(gl, programInfo, objectInfo, lightInfo, projectionMatrix);
+            drawObject(programInfo, lightInfo, projectionMatrix);
         }
 
         requestAnimationFrame(render);
@@ -216,7 +225,7 @@ function initObject(gl, content) {
 }
 
 // Draw object
-function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, objectInfo, lightInfo, projectionMatrix) {
+function drawObject(programInfo, lightInfo, projectionMatrix) {
     gl.useProgram(programInfo.program);
 
     // Object
@@ -227,6 +236,11 @@ function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, object
     worldMatrix.xRotate(slider_orx.value * Math.PI);
     worldMatrix.yRotate(slider_ory.value * Math.PI);
     worldMatrix.zRotate(slider_orz.value * Math.PI);
+    worldMatrix.scale(
+        Math.pow(Math.E, slider_osc.value), 
+        Math.pow(Math.E, slider_osc.value), 
+        Math.pow(Math.E, slider_osc.value)
+    );
 
     worldProjectionMatrix.elements = projectionMatrix.multiply(worldMatrix.elements);
 
@@ -277,13 +291,13 @@ function drawObject(/** @type {WebGLRenderingContext} */ gl, programInfo, object
 function modelToObject(model) {
     const object = {};
     object.length = model.geometry.indices.length;
-    object.positions = getGeometry(model);
+    object.positions = getPosition(model);
     object.normals = getNormal(model);
     object.material = getMaterial(model);
     return object;
 }
 
-function getGeometry(model) {
+function getPosition(model) {
     const positions = [];
     for (let i = 0; i < model.geometry.indices.length; i++) {
         const idx = model.geometry.indices[i];

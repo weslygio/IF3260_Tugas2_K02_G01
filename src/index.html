@@ -30,28 +30,28 @@
             <h2>Object</h2>
             <div class="object-position">    
                 <div class="rotate-and-scale">
-                    <p>Rotation about x-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="orx">
+                    <p>Rotation about x-axis: <label id="orx_val"></label>π</p>
+                    <input type="range" min="-1" max="1" step="0.01" oninput="document.getElementById('orx_val').innerHTML = this.value" class="slider" id="orx">
 
-                    <p>Rotation about y-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="ory">
+                    <p>Rotation about y-axis: <label id="ory_val"></label>π</p>
+                    <input type="range" min="-1" max="1" step="0.01" oninput="document.getElementById('ory_val').innerHTML = this.value" class="slider" id="ory">
 
-                    <p>Rotation about z-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="orz">
+                    <p>Rotation about z-axis: <label id="orz_val"></label>π</p>
+                    <input type="range" min="-1" max="1" step="0.01" oninput="document.getElementById('orz_val').innerHTML = this.value" class="slider" id="orz">
 
-                    <p>Scale</p>
-                    <input type="range" min="-2" max="2" step="0.01" class="slider" id="osc">
+                    <p>Scale: e<sup><label id="osc_val"></label></sup></p>
+                    <input type="range" min="-2" max="2" step="0.01" oninput="document.getElementById('osc_val').innerHTML = this.value" class="slider" id="osc">
                 </div>
 
                 <div class="translate">
-                    <p>Translation in x-axis</p>
-                    <input type="range" min="-10" max="10" step="0.1" class="slider" id="otx">
+                    <p>Translation in x-axis: <label id="otx_val"></label></p>
+                    <input type="range" min="-10" max="10" step="0.1" oninput="document.getElementById('otx_val').innerHTML = this.value" class="slider" id="otx">
 
-                    <p>Translation in y-axis</p>
-                    <input type="range" min="-10" max="10" step="0.1" class="slider" id="oty">
+                    <p>Translation in y-axis: <label id="oty_val"></label></p>
+                    <input type="range" min="-10" max="10" step="0.1" oninput="document.getElementById('oty_val').innerHTML = this.value" class="slider" id="oty">
 
-                    <p>Translation in z-axis</p>
-                    <input type="range" min="-10" max="10" step="0.1" class="slider" id="otz">
+                    <p>Translation in z-axis: <label id="otz_val"></label></p>
+                    <input type="range" min="-10" max="10" step="0.1" oninput="document.getElementById('otz_val').innerHTML = this.value" class="slider" id="otz">
                 </div>
             </div>
             <br>
@@ -59,8 +59,8 @@
             <h2>Camera</h2>
             <div class="camera">
                 <div class="radius-and-projection">
-                    <p>Radius</p>
-                    <input type="range" min="0" max="20" step="0.1" class="slider" id="crd">
+                    <p>Radius: <label id="crd_val"></label></p>
+                    <input type="range" min="0" max="20" step="0.1" oninput="document.getElementById('crd_val').innerHTML = this.value" class="slider" id="crd">
 
                     <p>Select a projection:</p>
                     <select id="cpj">
@@ -71,11 +71,11 @@
                 </div>
                 
                 <div class="rotation">
-                    <p>Rotation about x-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01"  class="slider" id="crx">
+                    <p>Rotation about x-axis: <label id="crx_val"></label>π</p>
+                    <input type="range" min="-0.49" max="0.49" step="0.01" oninput="document.getElementById('crx_val').innerHTML = this.value" class="slider" id="crx">
 
-                    <p>Rotation about y-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="cry">
+                    <p>Rotation about y-axis: <label id="cry_val"></label>π</p>
+                    <input type="range" min="-0.5" max="0.5" step="0.01" oninput="document.getElementById('cry_val').innerHTML = this.value" class="slider" id="cry">
                 </div>
             </div>
             <br>
@@ -83,19 +83,19 @@
             <h2>Light</h2>
             <div class="light">
                 <div class="radius-and-color">
-                    <p>Radius</p>
-                    <input type="range" min="0" max="20" step="0.1" class="slider" id="lrd">
+                    <p>Radius: <label id="lrd_val"></label></p>
+                    <input type="range" min="0" max="20" step="0.1" oninput="document.getElementById('lrd_val').innerHTML = this.value" class="slider" id="lrd">
 
                     <p>Select light's color:</p>
                     <input type="color" class="color-picker" id="lcl">
                 </div>
                 
                 <div class="rotation">
-                    <p>Rotation about x-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="lrx">
+                    <p>Rotation about x-axis: <label id="lrx_val"></label>π</p>
+                    <input type="range" min="-1" max="1" step="0.01" oninput="document.getElementById('lrx_val').innerHTML = this.value" class="slider" id="lrx">
 
-                    <p>Rotation about y-axis</p>
-                    <input type="range" min="-1" max="1" step="0.01" class="slider" id="lry">
+                    <p>Rotation about y-axis: <label id="lry_val"></label>π</p>
+                    <input type="range" min="-1" max="1" step="0.01" oninput="document.getElementById('lry_val').innerHTML = this.value" class="slider" id="lry">
                 </div>
             </div>
 
