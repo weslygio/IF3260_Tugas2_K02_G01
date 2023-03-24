@@ -310,7 +310,7 @@ function drawObject(programInfo, lightInfo, projectionMatrix) {
     gl.uniform4fv(programInfo.uniformLocations.ambientProduct, ambientProduct);
     gl.uniform4fv(programInfo.uniformLocations.diffuseProduct, diffuseProduct);
     gl.uniform4fv(programInfo.uniformLocations.specularProduct, specularProduct);
-    gl.uniform1f(programInfo.uniformLocations.shininess, 200);
+    gl.uniform1f(programInfo.uniformLocations.shininess, objectInfo.material.shininess);
     gl.uniform1f(programInfo.uniformLocations.useLighting, checkbox_shading.checked);
     
     // Draw Array
