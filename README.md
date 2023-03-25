@@ -3,7 +3,6 @@
 ## Anggota Kelompok
 - Wesly Giovano 13520071
 - Rio Alexander Audino 13520088
-- Petrus Elison Manurung 13518110
 
 ## Deskripsi
 
@@ -22,18 +21,18 @@ Secara keseluruhan, tugas besar ini berhasil mencapai tujuannya dengan berhasil 
 
 ## Cara Penggunaan Program
 - Menjalankan program :
-    - clone repo ini lalu jalankan index.html
+    - Clone repo ini lalu jalankan index.html. Alternatif lainnya yaitu dengan menggunakan http-server untuk menghindari terblokir CORS policy.
 - Memuat model: 
-    - pengguna dapat memuat satu model 3D dari file JSON dengan menggunakan tombol "Load Model".
+    - Pengguna dapat memuat satu model 3D dari file JSON dengan menggunakan tombol "Load Model".
 - Mengubah proyeksi: 
-    - pengguna dapat mengubah jenis proyeksi dengan memilih opsi "Orthographic", "Oblique", atau "Perspective" pada menu "Projection".
+    - Pengguna dapat mengubah jenis proyeksi dengan memilih opsi "Orthographic", "Oblique", atau "Perspective" pada menu "Projection".
 - Transformasi object: 
-    - pengguna dapat melakukan rotasi, translasi, dan scaling pada objek yang dipilih dengan menggeser slider pada panel transformasi. Rotasi dilakukan dengan menaikkan atau menurunkan sudut-sudut anguler dengan pusat rotasi di titik tengah objek yang dirotasi.
+    - Pengguna dapat melakukan rotasi, translasi, dan scaling pada objek yang dipilih dengan menggeser slider pada panel transformasi. Rotasi dilakukan dengan menaikkan atau menurunkan sudut-sudut anguler dengan pusat rotasi di titik tengah objek yang dirotasi.
 - Transformasi camera: 
-    - pengguna dapat mengubah jarak (radius) kamera view untuk mendekat atau menjauh dari model serta menggerakkan kamera untuk mengitari model dengan menggeser slider pada panel transformasi.
+    - Pengguna dapat mengubah jarak (radius) kamera view untuk mendekat atau menjauh dari model serta menggerakkan kamera untuk mengitari model dengan menggeser slider pada panel transformasi.
 - Transformasi cahaya: 
-    - pengguna dapat mengubah warna dasar pada model dengan mengontrol cahaya dengan menggeser slider pada panel cahaya.
+    - Pengguna dapat mengubah warna dasar pada model dengan mengontrol cahaya dengan menggeser slider pada panel cahaya.
 - Mengontrol Shader: 
-    - pengguna dapat menghidupkan atau mematikan shader dengan memilih opsi "On" atau "Off" pada menu "Shader".
+    - Pengguna dapat menghidupkan atau mematikan shader dengan memilih opsi "On" atau "Off" pada menu "Shader".
 - Melakukan reset: 
-    - pengguna dapat mengembalikan tampilan ke default dengan menekan tombol "Reset". Terdapat juga menu "Help" yang memudahkan pengguna baru untuk dapat melakukan operasi di atas tanpa harus bertanya.
+    - Pengguna dapat mengembalikan tampilan ke default dengan menekan tombol "Reset". Terdapat juga menu "Help" yang memudahkan pengguna baru untuk dapat melakukan operasi di atas tanpa harus bertanya.
